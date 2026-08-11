@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>张沛豪 · Golang 后端 / 微服务架构</title>
+<style>
+  /* 本地字体（离线自包含，Cloudflare Pages 无需外链） */
+  @font-face{font-family:'Space Grotesk';font-style:normal;font-weight:500;font-display:swap;src:url('fonts/space-grotesk-latin-500-normal.woff2') format('woff2');}
+  @font-face{font-family:'Space Grotesk';font-style:normal;font-weight:600;font-display:swap;src:url('fonts/space-grotesk-latin-600-normal.woff2') format('woff2');}
+  @font-face{font-family:'Space Grotesk';font-style:normal;font-weight:700;font-display:swap;src:url('fonts/space-grotesk-latin-700-normal.woff2') format('woff2');}
+  @font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/ibm-plex-sans-latin-400-normal.woff2') format('woff2');}
+  @font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:500;font-display:swap;src:url('fonts/ibm-plex-sans-latin-500-normal.woff2') format('woff2');}
+  @font-face{font-family:'IBM Plex Sans';font-style:normal;font-weight:600;font-display:swap;src:url('fonts/ibm-plex-sans-latin-600-normal.woff2') format('woff2');}
+  @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:400;font-display:swap;src:url('fonts/jetbrains-mono-latin-400-normal.woff2') format('woff2');}
+  @font-face{font-family:'JetBrains Mono';font-style:normal;font-weight:500;font-display:swap;src:url('fonts/jetbrains-mono-latin-500-normal.woff2') format('woff2');}
+  :root{
+    --ink:#0C1622;
+    --panel:#13202E;
+    --panel-2:#162634;
+    --line:#22323F;
+    --text:#D8E2EA;
+    --muted:#8497A6;
+    --fire:#E9B347;
+    --fire-glow:#F6D58A;
+    --display:'Space Grotesk','PingFang SC','Microsoft YaHei','Source Han Sans SC','Noto Sans CJK SC',sans-serif;
+    --body:'IBM Plex Sans','PingFang SC','Microsoft YaHei','Source Han Sans SC','Noto Sans CJK SC',sans-serif;
+    --mono:'JetBrains Mono','Cascadia Code','Courier New',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:
+      radial-gradient(1200px 600px at 80% -10%, rgba(233,179,71,0.07), transparent 60%),
+      var(--ink);
+    color:var(--text);
+    font-family:var(--body);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    padding:40px 20px 64px;
+  }
+  .resume{
+    max-width:1040px;
+    margin:0 auto;
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 30px 80px -40px rgba(0,0,0,0.8);
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    position:relative;
+    padding:38px 40px 30px;
+    border-bottom:1px solid var(--line);
+    background:linear-gradient(180deg, rgba(233,179,71,0.05), transparent 70%);
+  }
+  .hero::after{
+    content:"";
+    position:absolute;left:40px;right:40px;bottom:-1px;height:2px;
+    background:linear-gradient(90deg, var(--fire), transparent 70%);
+    opacity:.55;
+  }
+  .hero-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;}
+  .firefly-pulse{
+    width:13px;height:13px;border-radius:50%;
+    background:var(--fire);
+    box-shadow:0 0 0 0 rgba(233,179,71,0.55);
+    animation:pulse 2.6s ease-in-out infinite;
+    flex:0 0 auto;
+  }
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(233,179,71,0.55);opacity:.85;}
+    50%{box-shadow:0 0 14px 6px rgba(233,179,71,0.30);opacity:1;}
+    100%{box-shadow:0 0 0 0 rgba(233,179,71,0.55);opacity:.85;}
+  }
+  .name{
+    font-family:var(--display);
+    font-weight:700;
+    font-size:40px;
+    letter-spacing:.5px;
+    color:#fff;
+    line-height:1.1;
+  }
+  .role{
+    font-family:var(--mono);
+    font-size:14px;
+    color:var(--fire-glow);
+    margin-top:8px;
+  }
+  .tagline{
+    font-family:var(--mono);
+    font-size:13px;
+    color:var(--muted);
+    margin-top:14px;
+  }
+  .tagline b{color:var(--fire);font-weight:500;}
+
+  /* ---------- BODY GRID ---------- */
+  .grid{
+    display:grid;
+    grid-template-columns:330px 1fr;
+  }
+  .rail{
+    padding:30px 26px;
+    border-right:1px solid var(--line);
+    background:rgba(255,255,255,0.012);
+  }
+  .main{padding:30px 36px 36px;}
+
+  /* ---------- RAIL BLOCKS ---------- */
+  .rail-block{margin-bottom:26px;}
+  .rail-block:last-child{margin-bottom:0;}
+  .rail-head{
+    display:flex;align-items:center;gap:8px;
+    font-family:var(--mono);
+    font-size:11px;letter-spacing:2px;text-transform:uppercase;
+    color:var(--fire);
+    margin-bottom:12px;
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--fire);box-shadow:0 0 8px rgba(233,179,71,.6);}
+
+  .avatar{
+    width:96px;height:96px;border-radius:14px;overflow:hidden;
+    border:1px solid var(--line);
+    margin-bottom:16px;background:var(--panel-2);
+  }
+  .avatar img{width:100%;height:100%;object-fit:cover;display:block;}
+
+  .contact-row{
+    font-family:var(--mono);font-size:12.5px;color:var(--muted);
+    margin-bottom:8px;word-break:break-all;
+  }
+  .contact-row a{color:var(--text);text-decoration:none;}
+  .contact-row a:hover{color:var(--fire);}
+  .contact-row .k{color:var(--fire);margin-right:6px;}
+
+  .chips{display:flex;flex-wrap:wrap;gap:7px;}
+  .chip{
+    font-family:var(--mono);font-size:11.5px;
+    padding:4px 9px;border-radius:7px;
+    border:1px solid var(--line);color:var(--text);
+    background:var(--panel-2);
+    transition:.18s ease;
+  }
+  .chip:hover{border-color:var(--fire);color:var(--fire-glow);}
+  .skill-group{margin-bottom:10px;}
+  .skill-group .g-label{font-family:var(--mono);font-size:11px;color:var(--muted);margin-bottom:5px;}
+
+  .edu-item{font-size:13px;line-height:1.5;}
+  .edu-item .t{color:var(--text);}
+  .edu-item .s{font-family:var(--mono);font-size:11.5px;color:var(--muted);}
+  .cert{font-size:12.5px;color:var(--muted);line-height:1.7;}
+
+  /* ---------- SECTIONS ---------- */
+  .r-section{margin-bottom:30px;}
+  .r-section:last-child{margin-bottom:0;}
+  .sec-head{
+    display:flex;align-items:center;gap:9px;
+    font-family:var(--display);font-weight:600;font-size:18px;
+    color:#fff;margin-bottom:16px;
+  }
+  .sec-head .en{
+    font-family:var(--mono);font-size:11px;letter-spacing:2px;
+    color:var(--fire);text-transform:uppercase;
+  }
+
+  .profile-text{font-size:14px;color:var(--text);margin-bottom:14px;}
+  .adv{display:grid;grid-template-columns:1fr 1fr;gap:10px 18px;}
+  .adv li{
+    list-style:none;font-size:12.5px;color:var(--muted);
+    padding-left:14px;position:relative;line-height:1.5;
+  }
+  .adv li::before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--fire);opacity:.7;}
+  .adv li b{color:var(--text);font-weight:600;}
+
+  /* cards */
+  .card{
+    position:relative;
+    padding:14px 16px 14px 18px;
+    border:1px solid var(--line);
+    border-left:3px solid var(--fire);
+    border-radius:10px;
+    background:var(--panel-2);
+    margin-bottom:12px;
+    transition:.18s ease;
+  }
+  .card:hover{border-left-color:var(--fire-glow);transform:translateX(2px);}
+  .card:last-child{margin-bottom:0;}
+  .card-title{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .card-title .ct{font-family:var(--display);font-weight:600;font-size:15px;color:#fff;}
+  .card-title .ct .co{color:var(--fire-glow);font-weight:500;}
+  .card-title .pe{font-family:var(--mono);font-size:11.5px;color:var(--muted);white-space:nowrap;}
+  .card-desc{font-size:13px;color:var(--muted);margin:8px 0 6px;line-height:1.55;}
+  .card-desc.dark{color:var(--text);}
+  .bul{list-style:none;}
+  .bul li{
+    font-size:12.8px;color:var(--text);line-height:1.55;
+    padding-left:16px;position:relative;margin-bottom:4px;
+  }
+  .bul li:last-child{margin-bottom:0;}
+  .bul li::before{content:"▸";position:absolute;left:0;top:0;color:var(--fire);font-size:11px;}
+  .bul li b{color:var(--fire-glow);font-weight:600;}
+  .stack{
+    font-family:var(--mono);font-size:11.5px;color:var(--muted);
+    margin-top:6px;padding:6px 10px;border-radius:7px;
+    background:rgba(233,179,71,0.06);border:1px solid var(--line);
+  }
+
+  .footer{
+    padding:16px 40px;border-top:1px solid var(--line);
+    font-family:var(--mono);font-size:11px;color:var(--muted);
+    display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;
+  }
+  .footer a{color:var(--fire);text-decoration:none;}
+
+  @media (max-width:760px){
+    body{padding:16px 8px 40px;}
+    .grid{grid-template-columns:1fr;}
+    .rail{border-right:none;border-bottom:1px solid var(--line);}
+    .name{font-size:32px;}
+    .adv{grid-template-columns:1fr;}
+    .main,.rail{padding:24px 20px;}
+    .hero{padding:28px 22px 22px;}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .firefly-pulse{animation:none;box-shadow:0 0 10px 3px rgba(233,179,71,.35);}
+    .card{transition:none;}
+  }
+</style>
+</head>
+<body>
+  <main class="resume">
+
+    <!-- HERO -->
+    <header class="hero">
+      <div class="hero-top">
+        <span class="firefly-pulse" aria-hidden="true"></span>
+        <h1 class="name">张沛豪</h1>
+      </div>
+      <div class="role">Golang 后端 / 微服务架构 · 全栈交付</div>
+      <div class="tagline">// <b>Firefly</b> 框架作者 — 用 Go 在并发的暗处发光</div>
+    </header>
+
+    <div class="grid">
+      <!-- LEFT RAIL -->
+      <aside class="rail">
+        <div class="rail-block">
+          <div class="avatar">
+            <img src="https://raw.giteeusercontent.com/quajiu/imgs/raw/master/imgs/%E8%AF%81%E4%BB%B6%E7%85%A7%E7%99%BD%E5%BA%95.png" alt="证件照" />
+          </div>
+          <div class="contact-row"><span class="k">TEL</span>177-6257-7130</div>
+          <div class="contact-row"><span class="k">MAIL</span>1316847172@qq.com</div>
+          <div class="contact-row"><span class="k">HUB</span><a href="https://github.com/zhangpeihaoks" target="_blank" rel="noopener">github.com/zhangpeihaoks</a></div>
+          <div class="contact-row"><span class="k">LOC</span>武汉 · 男 · 26 岁</div>
+        </div>
+
+        <div class="rail-block">
+          <div class="rail-head"><span class="dot"></span>技能 SKILLS</div>
+          <div class="skill-group">
+            <div class="g-label">语言</div>
+            <div class="chips">
+              <span class="chip">Go · 精通</span><span class="chip">Python</span><span class="chip">PHP · 维护</span><span class="chip">SQL</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <div class="g-label">框架 / 架构</div>
+            <div class="chips">
+              <span class="chip">Gin</span><span class="chip">gRPC</span><span class="chip">微服务</span><span class="chip">Firefly</span><span class="chip">Jupiter</span><span class="chip">K8s</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <div class="g-label">数据 / 存储</div>
+            <div class="chips">
+              <span class="chip">MongoDB</span><span class="chip">Redis</span><span class="chip">MySQL</span><span class="chip">PostgreSQL</span><span class="chip">S3</span><span class="chip">Consul</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <div class="g-label">可观测 / 运维</div>
+            <div class="chips">
+              <span class="chip">Prometheus</span><span class="chip">Grafana</span><span class="chip">OpenTelemetry</span><span class="chip">Docker</span><span class="chip">Kafka</span><span class="chip">RocketMQ</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <div class="g-label">AI 工程化</div>
+            <div class="chips">
+              <span class="chip">LLM/AIGC</span><span class="chip">提示词工程</span><span class="chip">ChatGPT</span><span class="chip">Claude</span><span class="chip">DeepSeek</span><span class="chip">智谱</span><span class="chip">SD</span><span class="chip">Suno</span>
+            </div>
+          </div>
+          <div class="skill-group">
+            <div class="g-label">前端</div>
+            <div class="chips">
+              <span class="chip">Vue3</span><span class="chip">PixiJS</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rail-block">
+          <div class="rail-head"><span class="dot"></span>教育 EDU</div>
+          <div class="edu-item">
+            <div class="t">西安外事学院 · 本科</div>
+            <div class="s">数据科学与大数据技术 · 2018–2022</div>
+          </div>
+        </div>
+
+        <div class="rail-block">
+          <div class="rail-head"><span class="dot"></span>证书 CERT</div>
+          <div class="cert">
+            计算机二级 · 信息处理技术员 · 蓝桥杯算法大赛陕西省二等奖 · 大学英语四级 · 大数据技能竞赛特等奖
+          </div>
+        </div>
+      </aside>
+
+      <!-- RIGHT MAIN -->
+      <section class="main">
+        <div class="r-section">
+          <div class="sec-head"><span class="dot"></span>个人简介 <span class="en">PROFILE</span></div>
+          <p class="profile-text">5 年 IT 研发经验，精通 Golang 服务端开发与全栈交付。精通 Gin 与微服务架构，擅长高并发系统设计、性能调优与全链路可观测性落地；具备 LLM/AIGC 产品化从 0 到 1 经验，并能独立交付 Web 全栈项目。主导过公司级 AI 工具集平台与高并发活动系统，自研开源 Go 微服务框架 Firefly（MIT）。</p>
+          <ul class="adv">
+            <li><b>后端架构</b>：精通 Golang / Gin / 微服务，主导高并发活动系统（峰值零故障）与 AI 工具集平台从 0 到 1 全栈交付。</li>
+            <li><b>高可用与可观测性</b>：落地 Prometheus + Grafana 全链路监控、配置热重载、优雅关闭、乐观锁，构建故障自愈与秒级告警体系。</li>
+            <li><b>数据与 AI 工程化</b>：熟练 MongoDB / Redis / S3 数据架构；将 ChatGPT / Claude / DeepSeek / SD / Suno 封装为稳定后端服务，含智能 NPC 实时框架。</li>
+            <li><b>工程效能与开源</b>：自研并开源 Firefly Go 微服务框架（MIT，47 项测试，七大中间件），推动团队 agent 驱动 coding 范式升级。</li>
+          </ul>
+        </div>
+
+        <div class="r-section">
+          <div class="sec-head"><span class="dot"></span>工作经历 <span class="en">EXPERIENCE</span></div>
+
+          <div class="card">
+            <div class="card-title">
+              <span class="ct">武汉金山软件有限公司 · <span class="co">Golang 服务端开发工程师</span></span>
+              <span class="pe">2021.11 – 2025.01</span>
+            </div>
+            <ul class="bul">
+              <li>团队核心技术骨干，主导周年庆小游戏、AI 工具集、智能 NPC 等多条业务线后端架构设计与全栈交付，支撑公司核心活动与 AI 能力建设。</li>
+              <li>从 0 到 1 搭建部门级全链路监控告警体系（<b>Prometheus + Grafana</b>），长期稳定支撑内部业务，无严重线上故障。</li>
+              <li>探索 AI 能力在游戏产品中的工程化落地，统一多模型接入与提示词工程化，形成可复用的后端服务能力。</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <span class="ct">湖北省武汉市江岸区大数据中心 · <span class="co">信息处理员</span></span>
+              <span class="pe">2021.07 – 2021.08</span>
+            </div>
+            <ul class="bul">
+              <li>参与「武汉城市运行管理平台 - 江岸区」项目，通过故障复现与根因分析提升系统稳定性。</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <span class="ct">武汉哆咪网络科技有限公司 · <span class="co">Golang 后端研发工程师</span></span>
+              <span class="pe">2026.05 – 2026.07</span>
+            </div>
+            <ul class="bul">
+              <li>主导程序化短剧投放系统（巨量引擎）后端研发，重构管线链路服务并收敛部署架构。</li>
+              <li>推动团队从 chat 式 coding 转向 <b>agent 驱动</b>的提效范式，落地云原生监控告警方案。</li>
+              <li>重构核心 PHP 模块至基于 Go 的新系统，规避旧系统潜在风险点。</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="r-section">
+          <div class="sec-head"><span class="dot"></span>项目经历 <span class="en">PROJECTS</span></div>
+
+          <div class="card">
+            <div class="card-title">
+              <span class="ct">Firefly 微服务框架 · <span class="co">作者 / 独立开发（开源）</span></span>
+              <span class="pe">2026.05 – 至今</span>
+            </div>
+            <p class="card-desc">Firefly 是一个从零构建的模块化、可扩展 Go 后端微服务框架，采用分层架构，提供应用生命周期管理、多协议支持、中间件系统、统一错误处理、结构化日志、可观测性等核心能力。已通过 MIT 许可证在 GitHub 开源，配备中英文双语文档与完整 Docker 部署方案。</p>
+            <ul class="bul">
+              <li><b>框架架构设计</b>：独立设计并实现了传输层、中间件层、服务层、基础设施层的四层架构，支持 HTTP（基于 Gin）和 gRPC 双协议服务器，实现动态路由、路由分组、请求/响应统一处理等核心机制。</li>
+              <li><b>中间件系统研发</b>：构建洋葱模型中间件体系，内置 Recovery、Logging、Tracing、Metrics、Auth、RateLimit、CORS 七大中间件，实现 Panic 捕获自动恢复、令牌桶限流（100 req/s）、日志脱敏等生产级特性。</li>
+              <li><b>可观测性体系构建</b>：集成 OpenTelemetry 分布式追踪、Prometheus 指标自动收集、结构化日志（slog + lumberjack 轮转）三大支柱，形成完整三位一体可观测性方案。</li>
+              <li><b>基础设施抽象</b>：实现文件与 Consul 双模式服务注册发现、MySQL / PostgreSQL / MongoDB / Redis 四数据库连接器统一抽象、可插拔序列化（JSON / Protobuf 切换）、编译时依赖注入容器及插件生命周期管理。</li>
+              <li><b>工程质量保障</b>：属性测试与传统单元测试结合，覆盖应用配置、并发管理、中间件链执行顺序等共 <b>47 个核心属性</b>；完成 Docker 容器化与 Makefile 构建自动化。</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <span class="ct">智能 NPC 研发 · <span class="co">后端负责人</span></span>
+              <span class="pe">2024.09 – 2025.01</span>
+            </div>
+            <div class="stack">技术栈：Gin · MongoDB · Redis · Amazon S3 · LLM</div>
+            <p class="card-desc">基于斯坦福小镇论文，迭代研发的实时智能 NPC 服务器解决方案，实现高智能、低延迟的游戏内 NPC 交互体验。</p>
+            <ul class="bul">
+              <li><b>实时框架自研</b>：设计实时智能 NPC 服务端框架，解决业务扩展的性能瓶颈，并使问题追踪变得容易。</li>
+              <li><b>性能极致优化</b>：引入 Redis 缓存层与优化 LLM 输出机制，将系统从离线方案升级为实时方案，<b>NPC 响应速度提升 100%</b>，并有效降低模型幻觉。</li>
+              <li><b>技术方案选型</b>：采用 Gin + MongoDB + Redis + S3 成熟架构，保障高并发、易扩展与数据存储安全高效。</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <span class="ct">金山 AI 工具集 · <span class="co">全栈开发及主要负责人</span></span>
+              <span class="pe">2023.01 – 2025.01</span>
+            </div>
+            <div class="stack">技术栈：Gin · MongoDB · Redis · Amazon S3 · Prometheus · Grafana · Vue</div>
+            <p class="card-desc">公司内部的 AIGC 一站式服务平台，汇集对话、绘画、音乐、语音等主流 AIGC 能力，提供统一对外接口和管理后台。</p>
+            <ul class="bul">
+              <li><b>平台统一化建设</b>：主导平台从 0 到 1 全栈开发，整合 ChatGPT、Claude、DeepSeek、智谱等大模型及 StableDiffusion、SunoAI 能力，实现 AIGC 服务统一出口。</li>
+              <li><b>稳定性保障</b>：主导部门级全链路监控告警方案，大幅提升 Bug 排查效率；上线后长期稳定支撑内部业务，无严重线上故障。</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <span class="ct">金山周年庆小游戏 · <span class="co">后端负责人</span></span>
+              <span class="pe">2023.09 – 2024.01</span>
+            </div>
+            <div class="stack">技术栈：Gin · Redis · Amazon S3 · Prometheus · Grafana</div>
+            <p class="card-desc">为金山软件集团 35 周年庆典活动研发的高并发 Web 小游戏，是活动核心互动环节。</p>
+            <ul class="bul">
+              <li><b>高并发架构设计</b>：独立设计高并发服务器架构，成功支撑活动期间毫无规律的瞬时流量冲击，全程未出现性能瓶颈。</li>
+              <li><b>带权限的后台系统</b>：开发管理员后台，实现精细到人的权限控制与操作全链路追溯，满足大企业级活动管理需求。</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <div class="card-title">
+              <span class="ct">程序化投放系统 · <span class="co">后端研发</span></span>
+              <span class="pe">2026.05 – 2026.07</span>
+            </div>
+            <div class="stack">项目描述：基于巨量引擎开放能力的程序化投放系统　|　框架：think · Jupiter　|　MQ：Kafka · RocketMQ　|　存储：阿里云 · 连山云</div>
+            <ul class="bul">
+              <li><b>重构管线链路服务</b>：将原有数十台服务器部署模型收敛为 <b>K8s 单副本（Go 协程架构）</b>，资源成本大幅降低，执行效率提升 50%。</li>
+              <li>提升投放资产生产全链路效率，降低代码耦合与复杂度。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="footer">
+      <span>// built with Firefly ethos — 暗处发光</span>
+      <span><a href="https://github.com/zhangpeihaoks/firefly" target="_blank" rel="noopener">github.com/zhangpeihaoks/firefly</a></span>
+    </footer>
+  </main>
+</body>
+</html>
